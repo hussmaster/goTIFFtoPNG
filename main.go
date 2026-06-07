@@ -15,15 +15,18 @@ import (
 //second cmdline arg for where you want to save to - done
 //Create output folder ie. /home/ian/PhotoScansPNG - done
 //Double check that that folder doens't already exist, if it does quit program - done
-//After creating output folder as you walk the directory, create folder for each directory
-//Converts and saves image to png with same filename in the appropriate folder
-//so PhotoScans/1992/IanChild1.tif saves to PhotoScansPNG/1992/IanChild1.png
+//After creating output folder as you walk the directory, create folder for each directory - done
+//Converts and saves image to png with same filename in the appropriate folder - done
+//so PhotoScans/1992/IanChild1.tif saves to PhotoScansPNG/1992/IanChild1.png - done
+//Setup program to wait until go routines finish
+//Limit go routines to 10 at a time? To not overload cpu/memory
+//put in option for different output file formats: prompt for png, jpeg, etc
 
 //implement log file that tracks what files could not be converted
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("Incorrect number of arguments\nUsage: gotifftopng '<input directory>' '<output directory>'")
+		fmt.Println("incorrect number of arguments\nUsage: gotifftopng '<input directory>' '<output directory>'")
 		os.Exit(1)
 	}
 
@@ -47,6 +50,7 @@ func main() {
 }
 
 func walk(input string, d fs.DirEntry, err error) error {
+	inputDir := os.Args[1]
 	outputDir := os.Args[2]
 	//Check for and append trailing slash of output directory
 	oDirSuf := strings.HasSuffix(outputDir, "/")
@@ -58,12 +62,14 @@ func walk(input string, d fs.DirEntry, err error) error {
 		return err
 	}
 	if !d.IsDir() {
-		println(input)
-		fmt.Printf("Converting %s...\n", input)
-		err := convertImg(input, outputDir)
-		if err != nil {
-			fmt.Println(err)
-		}
+		//Get nested folder of original path
+		nestedFolder := strings.Split(input, inputDir)
+		outputDir += nestedFolder[1]
+		fmt.Printf("Converting %s to %s...\n", input, outputDir)
+		go convertImg(input, outputDir)
+		//if err != nil {
+		//	fmt.Println(err)
+		//}
 		//fmt.Print("Press 'Enter' to continue...")
 		//bufio.NewReader(os.Stdin).ReadBytes('\n')
 		//count += 1

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io/fs"
 	"log"
@@ -50,6 +49,7 @@ func main() {
 }
 
 func walk(input string, d fs.DirEntry, err error) error {
+	//var wg sync.WaitGroup
 	inputDir := os.Args[1]
 	outputDir := os.Args[2]
 	//Check for and append trailing slash of output directory
@@ -66,7 +66,11 @@ func walk(input string, d fs.DirEntry, err error) error {
 		nestedFolder := strings.Split(input, inputDir)
 		outputDir += nestedFolder[1]
 		fmt.Printf("Converting %s to %s...\n", input, outputDir)
-		go convertImg(input, outputDir)
+		convertImg(input, outputDir)
+		//wg.Go(func() {
+		//	convertImg(input, outputDir)
+		//})
+		//wg.Wait()
 		//if err != nil {
 		//	fmt.Println(err)
 		//}
@@ -86,7 +90,7 @@ func walk(input string, d fs.DirEntry, err error) error {
 		if err != nil {
 			log.Fatal(err)
 		}
-		bufio.NewReader(os.Stdin).ReadBytes('\n')
+		//bufio.NewReader(os.Stdin).ReadBytes('\n')
 	}
 	return nil
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 )
 
 // Checks if directory path exists, if not creates path
@@ -19,12 +18,4 @@ func pathCheck(path string) error {
 		}
 	}
 	return nil
-}
-
-// Function to mirror input directory to output directory
-func oDirAppend(inputPath, outputPath string) string {
-	slashIndex := strings.LastIndex(inputPath, "/")
-	tempName := inputPath[slashIndex+1:]
-	newOutputDir := outputPath + tempName + "/"
-	return newOutputDir
 }
